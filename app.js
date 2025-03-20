@@ -48,18 +48,7 @@ const userStates = new Map(); // Track which menu the user is in
 
 // Create a new WhatsApp client
 const client = new Client({
-    authStrategy: new LocalAuth(),
-    puppeteer: {
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--disable-gpu'
-        ]
-    }
+    authStrategy: new LocalAuth()
 });
 
 // Generate QR Code for WhatsApp Web authentication
