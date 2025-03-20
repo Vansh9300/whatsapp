@@ -26,10 +26,21 @@ const cleanupSession = async () => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Start server
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+const port = process.env.PORT || 3000;
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+    }).on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+            console.log(`Port ${port} is busy, trying ${port + 1}`);
+            app.listen(port + 1);
+        } else {
+            console.error('Server error:', err);
+        }
+    });
+} else {
+    module.exports = app;
+}
 
 // Maps to track user states
 const greetedUsers = new Map();
@@ -37,7 +48,18 @@ const userStates = new Map(); // Track which menu the user is in
 
 // Create a new WhatsApp client
 const client = new Client({
-    authStrategy: new LocalAuth()
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-gpu'
+        ]
+    }
 });
 
 // Generate QR Code for WhatsApp Web authentication
