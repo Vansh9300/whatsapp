@@ -28,12 +28,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Start server
 const port = process.env.PORT || 3000;
 if (process.env.NODE_ENV !== 'production') {
-    server.listen(port, () => {
+    server.listen(port, '0.0.0.0', () => {
         console.log(`Server is running on port ${port}`);
     }).on('error', (err) => {
         if (err.code === 'EADDRINUSE') {
             console.log(`Port ${port} is busy, trying ${port + 1}`);
-            server.listen(port + 1);
+            server.listen(port + 1, '0.0.0.0');
         } else {
             console.error('Server error:', err);
         }
